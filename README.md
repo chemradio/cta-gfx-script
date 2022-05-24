@@ -1,5 +1,5 @@
 # GFX Automation Script for TV Production
-Current Time TV Channel GFX automation script/template.
+Generic TV Channel GFX automation script/template.
 
 This script was developed by reverse engineering visual graphics in Current Time's broadcasts.
 
