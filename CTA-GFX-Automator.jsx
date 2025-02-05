@@ -986,14 +986,10 @@ function setBB(nameInput, quoteInput, audioName) {
 
 function editText(text) {
     while (
-        text.indexOf("ё") > -1 ||
-        text.indexOf("Ё") > -1 ||
         text.indexOf("«") > -1 ||
         text.indexOf("»") > -1 ||
         text.indexOf(" - ") > -1
     ) {
-        text = text.replace('ё', 'е')
-        text = text.replace('Ё', 'Е')
         text = text.replace('«', '"')
         text = text.replace('»', '"')
         text = text.replace(' - ', ' – ')
