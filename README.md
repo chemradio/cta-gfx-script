@@ -1,31 +1,34 @@
-# Current Time TV animation automation for After Effects
+# Current Time TV Animation Automation for After Effects
 
-This script automates everyday routine tasks for animation artists. It streamlines file import, animation properties, text field population and other tasks. Even a person with zero After Effects knowledge can obtain broadcast ready elements for their news report with it.
+This script automates everyday routine tasks for animation artists. It streamlines file import, animation properties, text field population, and other repetitive tasks. Even someone with zero After Effects knowledge can produce broadcast-ready elements for news reports using this tool.
 
 ## Usage
 
-The perfect scenario is achieved if you have two image media files (or PDF). This way the resulting animation is much richer and engaging. Adding a quote is also going to make the animation to look much better.
+The optimal result is achieved when you have two image media files (or PDFs). This approach produces a much richer and more engaging animation. Adding a quote will further enhance the visual appeal.
 
-For a social media quote:
+### For a social media quote:
 
--   FOREGROUND: a screenshot of a social media post itself
--   BACKGROUND: a long vertical screenshot of a profile page of the author of the quote
+-   **FOREGROUND:** A screenshot of the social media post itself
+-   **BACKGROUND:** A long vertical screenshot of the author's profile page
 
-For a press-release or a document:
+### For a press release or document:
 
--   FOREGROUND: a PDF or image file of the document itself
--   BACKGROUND: a long vertical screenshot of a website of an organization's website
+-   **FOREGROUND:** A PDF or image file of the document itself
+-   **BACKGROUND:** A long vertical screenshot of the organization's website
 
-If the media that contains the desired quote if of bad quality or it's visual appeal is lacking in some way (perhaps it was just a WhatsApp message) user can resort to single layer animation and just use some suiting image and a quote box.
+If the media containing the desired quote is of poor quality or lacks visual appeal (perhaps it's just a WhatsApp message), you can use a single-layer animation with a suitable image and a quote box instead.
 
-### Notice on binary strings
+Adding audio makes the quote box close when the audio file ends.
 
-A lot of encoded binary strings contain image placeholders. These are used for previewing animation before hitting Start. The preview window saves time so that you don't have to commit to starting the script's inner workings if unsure. In a fast-paced TV production this may save a lot of time and nerves.
+## Notice on Binary Strings
 
-One of the strings contains Colorama effect .ffx file which can not be coded using conventional scripting for After Effects. The script unpacks the Colorama.ffx to the user's desktop folder, applies it in After Effects and erases it from the Desktop.
+Many encoded binary strings contain image placeholders. These are used for previewing the animation before clicking Start. The preview window saves time by allowing you to review the animation without committing to the script's full execution. In fast-paced TV production environments, this can save considerable time and stress.
 
-### Resources
+One of the strings contains a Colorama effect .ffx file, which cannot be generated using conventional After Effects scripting. The script unpacks Colorama.ffx to the user's Desktop folder, applies it in After Effects, and then deletes it from the Desktop.
 
-Creating this script was made possible thanks to amazing tutorials of Nate Lovell from NTProductions. Nate, thank you very much!
-Nate's YouTube: https://www.youtube.com/@NTProductions
-Nate's Github: https://github.com/NTProductions
+## Resources
+
+Creating this script was made possible thanks to the amazing tutorials by Nate Lovell from NTProductions. Nate, thank you very much!
+
+-   Nate's YouTube: https://www.youtube.com/@NTProductions
+-   Nate's GitHub: https://github.com/NTProductions
