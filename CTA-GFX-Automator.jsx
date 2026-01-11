@@ -346,7 +346,7 @@ var previewAssetsDimensions = {
     photoHeightPercent: .7,
     docMatteWidth: .7
 }
-uberParameters = {};
+animationParams = {};
 globalMotionBlur = true;
 
 
@@ -355,8 +355,8 @@ createGUI();
 
 
 
-function uberScriptOne(parameters, uberWindow) {
-    // app.beginUndoGroup("uberScriptOne");
+function composer(parameters, uberWindow) {
+    // app.beginUndoGroup("composer");
 
     // create progress window
     progressWindow = new Window("palette", "Progress", undefined);
@@ -635,7 +635,7 @@ function updateProgress(stage, percent) {
 }
 
 
-function addTimeSuffix() {
+function generateTimeSuffix() {
     var today = new Date();
     var hh = String(today.getHours());
     var mm = String(today.getMinutes());
@@ -1700,7 +1700,7 @@ function createGUI() {
         if (targetPath != null) {
             manualBGText.text = targetPath;
             outputPathText.text = targetPath.path;
-            outputDescriptorText.text = targetPath.parent.name + "-GFX-" + addTimeSuffix();
+            outputDescriptorText.text = targetPath.parent.name + "-GFX-" + generateTimeSuffix();
             manualPostText.enabled = true;
             // manualPostBrowser.enabled = true;
             manualAudioText.enabled = true;
@@ -1718,7 +1718,7 @@ function createGUI() {
             updatePreview();
         } else if (manualBGText.text && manualBGText.text != null) {
             outputPathText.text = targetPath.path;
-            outputDescriptorText.text = targetPath.parent.name + "-GFX-" + addTimeSuffix();
+            outputDescriptorText.text = targetPath.parent.name + "-GFX-" + generateTimeSuffix();
             manualPostText.enabled = true;
             // manualPostBrowser.enabled = true;
             manualAudioText.enabled = true;
@@ -2323,7 +2323,7 @@ function createGUI() {
     }
 
     var outputPathText = outputGroup.add("edittext", undefined, localDict.outputPathNote, { readonly: "true" });
-    var outputDescriptorText = outputGroup.add("edittext", undefined, "Name-" + addTimeSuffix(), { readonly: "true" });
+    var outputDescriptorText = outputGroup.add("edittext", undefined, "Name-" + generateTimeSuffix(), { readonly: "true" });
     outputPathText.characters = outputDescriptorText.characters = 60;
 
     var buttonsGroup = outputAndButtonsGroup.add("group", undefined, "buttonsGroup");
@@ -2512,34 +2512,34 @@ function createGUI() {
             var autoFiles = autoModeFolder.getFiles();
             var autoImages = [];
 
-            uberParameters.isAutoDoable = false;
-            uberParameters.audioFile = undefined;
+            animationParams.isAutoDoable = false;
+            animationParams.audioFile = undefined;
             audio_loop:
             for (var i = 0; i < audioExtensions.length; i++) {
                 for (var j = 0; j < autoFiles.length; j++) {
                     if (autoFiles[j].fsName.toLowerCase().indexOf(audioExtensions[i]) != -1) {
-                        uberParameters.audioFile = autoFiles[j];
-                        uberParameters.hasAudio = true;
+                        animationParams.audioFile = autoFiles[j];
+                        animationParams.hasAudio = true;
                         break audio_loop;
                     }
 
                 }
             }
 
-            uberParameters.backGroundImage = undefined;
-            uberParameters.foregroundImage = undefined;
+            animationParams.backGroundImage = undefined;
+            animationParams.foregroundImage = undefined;
             image_loop:
             for (var i = 0; i < imageExtensions.length; i++) {
                 for (var j = 0; j < autoFiles.length; j++) {
                     if (autoFiles[j].fsName.toLowerCase().indexOf(imageExtensions[i]) != -1) {
                         autoImages.push(autoFiles[j]);
-                        if (uberParameters.backGroundImage == undefined) {
-                            uberParameters.backGroundImage = autoFiles[j];
-                            uberParameters.isAutoDoable = true;
-                            uberParameters.isTwoLayer = false;
+                        if (animationParams.backGroundImage == undefined) {
+                            animationParams.backGroundImage = autoFiles[j];
+                            animationParams.isAutoDoable = true;
+                            animationParams.isTwoLayer = false;
                         } else {
-                            uberParameters.foregroundImage = autoFiles[j];
-                            uberParameters.isTwoLayer = true;
+                            animationParams.foregroundImage = autoFiles[j];
+                            animationParams.isTwoLayer = true;
                             break image_loop;
                         }
                     }
@@ -2548,17 +2548,17 @@ function createGUI() {
 
             image_sort:
             for (var i = 0; i < autoImages.length; i++) {
-                if (uberParameters.isAutoDoable == true && uberParameters.isTwoLayer == true) {
+                if (animationParams.isAutoDoable == true && animationParams.isTwoLayer == true) {
                     for (var j = 0; j < bgKeywords.length; j++) {
                         if (autoImages[i].fsName.toLowerCase().indexOf(bgKeywords[j]) != -1) {
-                            uberParameters.backGroundImage = autoImages[i];
+                            animationParams.backGroundImage = autoImages[i];
                             autoImages.splice(i, 1);
-                            uberParameters.foregroundImage = autoImages[0];
+                            animationParams.foregroundImage = autoImages[0];
                             break image_sort;
                         } else if (autoImages[i].fsName.toLowerCase().indexOf(fgKeywords[j]) != -1) {
-                            uberParameters.foregroundImage = autoImages[i];
+                            animationParams.foregroundImage = autoImages[i];
                             autoImages.splice(i, 1);
-                            uberParameters.backGroundImage = autoImages[0];
+                            animationParams.backGroundImage = autoImages[0];
                             break image_sort;
                         }
                     }
@@ -2567,9 +2567,9 @@ function createGUI() {
                 }
             }
 
-            // alert(uberParameters.toSource());
+            // alert(animationParams.toSource());
             // populate manual tab
-            if (uberParameters.isAutoDoable == true) {
+            if (animationParams.isAutoDoable == true) {
                 filesGroup.visible = true;
                 sourceInitGroup.visible = false;
                 manualBGPreview.enabled = true;
@@ -2577,14 +2577,14 @@ function createGUI() {
                 manualAudioText.enabled = true;
                 manualAudioBrowser.enabled = true;
 
-                manualBGText.text = uberParameters.backGroundImage.fsName;
+                manualBGText.text = animationParams.backGroundImage.fsName;
 
                 manualPostText.enabled = true;
                 manualPostBrowser.enabled = true;
 
 
-                if (uberParameters.isTwoLayer == true) {
-                    manualPostText.text = uberParameters.foregroundImage.fsName;
+                if (animationParams.isTwoLayer == true) {
+                    manualPostText.text = animationParams.foregroundImage.fsName;
                     manualPostPreview.enabled = true;
                     manualPostClear.enabled = true;
                     swapFilesButton.enabled = true;
@@ -2595,8 +2595,8 @@ function createGUI() {
                     swapFilesButton.enabled = false;
                 }
 
-                if (uberParameters.hasAudio == true) {
-                    manualAudioText.text = uberParameters.audioFile.fsName;
+                if (animationParams.hasAudio == true) {
+                    manualAudioText.text = animationParams.audioFile.fsName;
                     manualAudioPreview.enabled = true;
                     manualAudioClear.enabled = true;
                 } else {
@@ -2606,7 +2606,7 @@ function createGUI() {
                 }
 
                 outputPathText.text = autoModeFolder.fsName;
-                outputDescriptorText.text = autoModeFolder.name + "-GFX-" + addTimeSuffix();
+                outputDescriptorText.text = autoModeFolder.name + "-GFX-" + generateTimeSuffix();
                 doItButton.enabled = true;
                 optionsPanel.enabled = true;
                 // quotePanel.enabled = true;
@@ -2658,83 +2658,83 @@ function createGUI() {
             }
         }
 
-        uberParameters.backGroundImage = File(manualBGText.text);
-        uberParameters.foregroundImage = (manualPostText.text.length > 0) ? File(manualPostText.text) : undefined;
-        uberParameters.isTwoLayer = (uberParameters.foregroundImage != undefined) ? true : false;
-        uberParameters.audioFile = (manualAudioText.text.length > 0) ? File(manualAudioText.text) : undefined;
-        uberParameters.hasAudio = (uberParameters.audioFile != undefined) ? true : false;
-        uberParameters.roundCorners = chkRoundCorners.value;
-        uberParameters.biggerPost = chkBiggerPost.value;
-        uberParameters.staticPost = chkStaticPost.value;
-        uberParameters.compSlideIn = chkSlideInComp.value;
-        uberParameters.quoteEnabled = chkQuoteEnabled.value;
-        uberParameters.quoteAuthor = quoteAuthorText.text;
-        uberParameters.quoteText = quoteTextText.text;
-        uberParameters.saveProject = chkSaveProjectManual.value;
-        uberParameters.outputPath = outputPathText.text;
-        uberParameters.descriptor = outputDescriptorText.text;
-        uberParameters.ccVersion = getAppVersion();
-        uberParameters.fontFamily = fontSelector.selection.text;
-        uberParameters.fastMode = chkFastMode.value;
+        animationParams.backGroundImage = File(manualBGText.text);
+        animationParams.foregroundImage = (manualPostText.text.length > 0) ? File(manualPostText.text) : undefined;
+        animationParams.isTwoLayer = (animationParams.foregroundImage != undefined) ? true : false;
+        animationParams.audioFile = (manualAudioText.text.length > 0) ? File(manualAudioText.text) : undefined;
+        animationParams.hasAudio = (animationParams.audioFile != undefined) ? true : false;
+        animationParams.roundCorners = chkRoundCorners.value;
+        animationParams.biggerPost = chkBiggerPost.value;
+        animationParams.staticPost = chkStaticPost.value;
+        animationParams.compSlideIn = chkSlideInComp.value;
+        animationParams.quoteEnabled = chkQuoteEnabled.value;
+        animationParams.quoteAuthor = quoteAuthorText.text;
+        animationParams.quoteText = quoteTextText.text;
+        animationParams.saveProject = chkSaveProjectManual.value;
+        animationParams.outputPath = outputPathText.text;
+        animationParams.descriptor = outputDescriptorText.text;
+        animationParams.ccVersion = getAppVersion();
+        animationParams.fontFamily = fontSelector.selection.text;
+        animationParams.fastMode = chkFastMode.value;
 
         //determine animation type
         if (chkTypeFB.value) {
-            uberParameters.animationType = 'facebook';
+            animationParams.animationType = 'facebook';
         } else if (chkTypeIG.value) {
-            uberParameters.animationType = 'instagram';
+            animationParams.animationType = 'instagram';
         } else if (chkTypeDOC.value) {
-            uberParameters.animationType = 'document';
+            animationParams.animationType = 'document';
         } else if (chkTypePHOTO.value) {
-            uberParameters.animationType = 'photo';
+            animationParams.animationType = 'photo';
         } else if (chkTypePageScroll.value) {
-            uberParameters.animationType = 'scroll';
-            uberParameters.isTwoLayer = false;
+            animationParams.animationType = 'scroll';
+            animationParams.isTwoLayer = false;
         } else if (chkTypeTwitter.value) {
-            uberParameters.animationType = 'twitter';
+            animationParams.animationType = 'twitter';
         } else if (chkTypePageZoom.value) {
-            uberParameters.animationType = 'zoom';
-            uberParameters.isTwoLayer = false;
+            animationParams.animationType = 'zoom';
+            animationParams.isTwoLayer = false;
         }
 
         if (chkPhotoBackground.value) {
-            uberParameters.backgroundAnimationType = "zoom";
+            animationParams.backgroundAnimationType = "zoom";
         } else {
-            uberParameters.backgroundAnimationType = "scroll";
+            animationParams.backgroundAnimationType = "scroll";
         }
 
         if (radioRes720p.value) {
-            uberParameters.resolution = [1280, 720];
+            animationParams.resolution = [1280, 720];
         } else if (radioRes1080p.value) {
-            uberParameters.resolution = [1920, 1080];
+            animationParams.resolution = [1920, 1080];
         } else if (radioRes4k.value) {
-            uberParameters.resolution = [3840, 2160];
+            animationParams.resolution = [3840, 2160];
         }
 
         if (radio24fps.value) {
-            uberParameters.frameRate, compFrameRate = 23.976;
+            animationParams.frameRate, compFrameRate = 23.976;
         } else if (radio25fps.value) {
-            uberParameters.frameRate, compFrameRate = 25;
+            animationParams.frameRate, compFrameRate = 25;
         } else if (radio30fps.value) {
-            uberParameters.frameRate, compFrameRate = 30;
+            animationParams.frameRate, compFrameRate = 30;
         }
 
-        compWidth = uberParameters.resolution[0];
-        compHeight = uberParameters.resolution[1];
-        // compFrameRate = uberParameters.frameRate;
+        compWidth = animationParams.resolution[0];
+        compHeight = animationParams.resolution[1];
+        // compFrameRate = animationParams.frameRate;
 
-        uberParameters.typeFB = chkTypeFB.value;
-        uberParameters.typeIG = chkTypeIG.value;
-        uberParameters.typeDOC = chkTypeDOC.value;
-        uberParameters.typePHOTO = chkTypePHOTO.value;
+        animationParams.typeFB = chkTypeFB.value;
+        animationParams.typeIG = chkTypeIG.value;
+        animationParams.typeDOC = chkTypeDOC.value;
+        animationParams.typePHOTO = chkTypePHOTO.value;
 
-        uberParameters.motionBlur = chkMotionBlur.value;
+        animationParams.motionBlur = chkMotionBlur.value;
         globalMotionBlur = chkMotionBlur.value;
-        $.writeln(uberParameters.toSource());
+        $.writeln(animationParams.toSource());
         uberWindow.hide();
 
         // return;
         try {
-            uberScriptOne(uberParameters, uberWindow);
+            composer(animationParams, uberWindow);
         } catch (errorMessage) {
             alert("Main script failed" + "\n\n" + errorMessage + "\n\nPlease send this report to the script author");
             return false;
