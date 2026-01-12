@@ -14,4 +14,3 @@ if ($.os.indexOf('Macintosh') != -1) {
 
 var testingScript = false;
 animationParams = {};
-

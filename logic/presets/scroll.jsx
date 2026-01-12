@@ -1,6 +1,4 @@
-
-
-function applyScrollPreset(scrollTargetLayer) {
+function applyScrollPreset(scrollTargetLayer, compHeight, easeInKeyframe, easeOutKeyframe) {
     scrollTargetLayer.selected = true;
     var scrollSpeedSlider = scrollTargetLayer.property("ADBE Effect Parade").addProperty('ADBE Slider Control');
     scrollSpeedSlider.name = 'Scroll Speed';
@@ -9,9 +7,9 @@ function applyScrollPreset(scrollTargetLayer) {
     var incomingSlider = scrollTargetLayer.property("ADBE Effect Parade").addProperty('ADBE Slider Control');
     incomingSlider.name = 'Incoming';
     incomingSlider.slider.setValueAtTime(0, compHeight);
-    incomingSlider.slider.setTemporalEaseAtKey(1, [easeInCT]);
+    incomingSlider.slider.setTemporalEaseAtKey(1, [easeInKeyframe]);
     incomingSlider.slider.setValueAtTime(1.3, 0);
-    incomingSlider.slider.setTemporalEaseAtKey(2, [easeOutCT]);
+    incomingSlider.slider.setTemporalEaseAtKey(2, [easeOutKeyframe]);
 
     var slideInScrollCheckbox = scrollTargetLayer.property("ADBE Effect Parade").addProperty('ADBE Checkbox Control');
     slideInScrollCheckbox.name = 'SlideIn';
@@ -34,14 +32,74 @@ function applyScrollPreset(scrollTargetLayer) {
     zoomInAmountScrollSlider.slider.setValue(10);
 
     scrollTargetLayer.transform.scale.expressionEnabled = true;
-    scrollTargetLayer.transform.scale.expression = 'zoomIn = effect("ZoomIn")("Checkbox").value;\nzoomInAmount = effect("ZoomIn Amount")("Slider").value;\nfitToWidth = effect("FitToBackground")("Checkbox").value;\nincoming = effect("Incoming")("Slider").value;\nfitToPost = effect("FitToSocialPost")("Checkbox").value;\nif ( fitToWidth == true ) {\n	proportion =' + compWidth + '*100/thisLayer.width;\n	x = proportion + value[0] - 100;\n	y = proportion + value[1] - 100;\n} else if (fitToPost == true) {\n	proportion = ' + compWidth * .52 + '*100/thisLayer.width;\n	x = proportion + value[0] - 100;\n	y = proportion + value[1] - 100;\n} else {\n	x = value[0];\n	y = value[1];\n}\nif (zoomIn == true) { \n	liner = linear( incoming, 0, thisComp.height, zoomInAmount, 0 );\n	[ x + liner, y + liner]\n	//easeOut(time,inPoint,inPoint + 1.5,[ x, y ],[ x+ zoomInAmount, y+ zoomInAmount ]) \n} else {\n	[ x, y ] \n}';
+    scrollTargetLayer.transform.scale.expression = scaleExprScrollPreset.toString().replace(/^[^{]+{|}$/g, '');
 
     scrollTargetLayer.position.dimensionsSeparated = true;
     scrollTargetLayer.transform.property("ADBE Position_1").setValue(compHeight / 2);
     scrollTargetLayer.transform.property("ADBE Position_1").expressionEnabled = true;
-    scrollTargetLayer.transform.property("ADBE Position_1").expression = 'yEase = effect("Incoming")("Slider").value;\nscrollSlider = effect("Scroll Speed")("Slider").value;\noffsetTime = time - thisLayer.startTime;\noffsetTimeAfterZoom = time - thisLayer.effect("Incoming")("Slider").key(2).time;\nzoomIn = effect("ZoomIn")("Checkbox").value;\nfitToSocial = effect("FitToSocialPost")("Checkbox").value;\nif (fitToSocial == true){socialOffset = ' + compHeight * 0.125 + '} else {socialOffset = 0}\nif (effect("SlideIn")("Checkbox") == true) {\nvar resultY = yEase - offsetTimeAfterZoom*scrollSlider + transform.yPosition-thisComp.height/2;\n} else {\nif ( zoomIn == true ) { \nif (time < thisLayer.effect("Incoming")("Slider").key(2).time) {\nvar resultY = transform.yPosition - thisComp.height/2 + socialOffset;\n} else {\nvar resultY = -offsetTimeAfterZoom*scrollSlider + transform.yPosition - thisComp.height/2 + socialOffset;\n}\n} else {\nvar resultY = -offsetTime*scrollSlider + transform.yPosition - thisComp.height/2 + socialOffset;\n}\n}\nif (fitToSocial || effect("SlideIn")("Checkbox") == true) {resultY;} else {\nclampY = thisLayer.height*thisLayer.scale[1]/100 - thisComp.height;\nclamp(resultY,0,-clampY);\n}';
+    scrollTargetLayer.transform.property("ADBE Position_1").expression = transformExprScrollPreset.toString().replace(/^[^{]+{|}$/g, '');
     scrollTargetLayer.transform.property("ADBE Anchor Point").setValue([scrollTargetLayer.width / 2, 0, 0]);
     scrollTargetLayer.transform.property("ADBE Anchor Point").expressionEnabled = true;
     scrollTargetLayer.transform.property("ADBE Anchor Point").expression = '[value[0],0+value[1]]';
     scrollTargetLayer.selected = false;
+}
+
+function scaleExprScrollPreset() {
+    zoomIn = effect("ZoomIn")("Checkbox").value;
+    zoomInAmount = effect("ZoomIn Amount")("Slider").value;
+    fitToWidth = effect("FitToBackground")("Checkbox").value;
+    incoming = effect("Incoming")("Slider").value;
+    fitToPost = effect("FitToSocialPost")("Checkbox").value;
+    if (fitToWidth == true) {
+        proportion = ' + compWidth + ' * 100 / thisLayer.width;
+        x = proportion + value[0] - 100;
+        y = proportion + value[1] - 100;
+    } else if (fitToPost == true) {
+        proportion = ' + compWidth * .52 + ' * 100 / thisLayer.width;
+        x = proportion + value[0] - 100;
+        y = proportion + value[1] - 100;
+    } else {
+        x = value[0];
+        y = value[1];
+    }
+    if (zoomIn == true) {
+        liner = linear(incoming, 0, thisComp.height, zoomInAmount, 0);
+        [x + liner, y + liner]
+        //easeOut(time, inPoint, inPoint + 1.5, [x, y], [x + zoomInAmount, y + zoomInAmount])
+    } else {
+        [x, y]
+    };
+}
+
+function transformExprScrollPreset() {
+    yEase = effect("Incoming")("Slider").value;
+    scrollSlider = effect("Scroll Speed")("Slider").value;
+    offsetTime = time - thisLayer.startTime;
+    offsetTimeAfterZoom = time - thisLayer.effect("Incoming")("Slider").key(2).time;
+    zoomIn = effect("ZoomIn")("Checkbox").value;
+    fitToSocial = effect("FitToSocialPost")("Checkbox").value;
+    if (fitToSocial == true) {
+        socialOffset = ' + compHeight * 0.125 + '
+    } else {
+        socialOffset = 0
+    }
+    if (effect("SlideIn")("Checkbox") == true) {
+        var resultY = yEase - offsetTimeAfterZoom * scrollSlider + transform.yPosition - thisComp.height / 2;
+    } else {
+        if (zoomIn == true) {
+            if (time < thisLayer.effect("Incoming")("Slider").key(2).time) {
+                var resultY = transform.yPosition - thisComp.height / 2 + socialOffset;
+            } else {
+                var resultY = -offsetTimeAfterZoom * scrollSlider + transform.yPosition - thisComp.height / 2 + socialOffset;
+            }
+        } else {
+            var resultY = -offsetTime * scrollSlider + transform.yPosition - thisComp.height / 2 + socialOffset;
+        }
+    }
+    if (fitToSocial || effect("SlideIn")("Checkbox") == true) {
+        resultY;
+    } else {
+        clampY = thisLayer.height * thisLayer.scale[1] / 100 - thisComp.height;
+        clamp(resultY, 0, -clampY);
+    };
 }
