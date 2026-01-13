@@ -1,9 +1,11 @@
-﻿{/* <THOUGHTS>
-    if social post aspect ratio < 1.05
-        make fb animation
-    else
-        make twi animation
-</THOUGHTS> */}
+﻿{
+    /* <THOUGHTS>
+        if social post aspect ratio < 1.05
+            make fb animation
+        else
+            make twi animation
+    </THOUGHTS> */
+}
 
 
 //INIT
@@ -524,14 +526,16 @@ function composer(parameters, uberWindow) {
                 break;
         }
         //add round corners mask
-        if (parameters.roundCorners == true) { addRoundMask(postPreCompName); }
+        if (parameters.roundCorners == true) {
+            addRoundMask(postPreCompName);
+        }
     }
 
     //set Quote
     updateProgress(localDict.setQuote);
     if (parameters.quoteEnabled) {
         app.project.item(1).layer(findLayerIdByName("Quote-Box")).enabled = true;
-        setBB(
+        populateBlueBox(
             editText(insertUnbreakableSpaces(parameters.quoteAuthor)),
             editText(insertUnbreakableSpaces(parameters.quoteText)),
             audioTrack
@@ -640,9 +644,15 @@ function generateTimeSuffix() {
     var hh = String(today.getHours());
     var mm = String(today.getMinutes());
     var ss = String(today.getSeconds());
-    if (hh.length < 2) { hh = "0" + hh; }
-    if (mm.length < 2) { mm = "0" + mm; }
-    if (ss.length < 2) { ss = "0" + ss; }
+    if (hh.length < 2) {
+        hh = "0" + hh;
+    }
+    if (mm.length < 2) {
+        mm = "0" + mm;
+    }
+    if (ss.length < 2) {
+        ss = "0" + ss;
+    }
     var timeSuffix = hh + "-" + mm + "-" + ss;
     return timeSuffix;
 }
@@ -663,8 +673,25 @@ function addRoundMask(postLayer) {
     roundCorners = new Shape();
     ratio = 2.6
     roundness = targetLayer.width * ratio / 100;
-    roundCorners.vertices = [[roundness, 0], [targetLayer.width - roundness, 0], [targetLayer.width, roundness], [targetLayer.width, targetLayer.height - roundness], [targetLayer.width - roundness, targetLayer.height], [roundness, targetLayer.height], [0, targetLayer.height - roundness], [0, roundness]];
-    roundCorners.inTangents = [[-roundness, 0], [0, 0], [0, -roundness], [0, 0], [roundness, 0], [0, 0], [0, roundness]];
+    roundCorners.vertices = [
+        [roundness, 0],
+        [targetLayer.width - roundness, 0],
+        [targetLayer.width, roundness],
+        [targetLayer.width, targetLayer.height - roundness],
+        [targetLayer.width - roundness, targetLayer.height],
+        [roundness, targetLayer.height],
+        [0, targetLayer.height - roundness],
+        [0, roundness]
+    ];
+    roundCorners.inTangents = [
+        [-roundness, 0],
+        [0, 0],
+        [0, -roundness],
+        [0, 0],
+        [roundness, 0],
+        [0, 0],
+        [0, roundness]
+    ];
     roundCorners.closed = true;
     app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').addProperty("ADBE Mask Atom");
     app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').property("ADBE Mask Atom").property("ADBE Mask Shape").setValue(roundCorners);
@@ -824,7 +851,9 @@ function configureEffectParameters(animationType, layerName, postScrollSpeed, au
         case "socialPost":
             applyScrollPreset(targetLayer);
             applyWipePreset(targetLayer, "open");
-            if (scaleBumper == true) { targetLayer.scale.setValue([110, 110, 110]); }
+            if (scaleBumper == true) {
+                targetLayer.scale.setValue([110, 110, 110]);
+            }
             targetLayer.effect("Scroll Speed").slider.setValue(postScrollSpeed);
             targetLayer.effect("SlideIn").checkbox.setValue(false);
             targetLayer.effect("FitToBackground").checkbox.setValue(false);
@@ -966,7 +995,7 @@ function importAsset(file) {
 }
 
 
-function setBB(nameInput, quoteInput, audioName) {
+function populateBlueBox(nameInput, quoteInput, audioName) {
     if (audioName) {
         quoteOutPoint = app.project.item(1).layer(findLayerIdByName(audioName)).outPoint;
     } else {
@@ -1558,7 +1587,7 @@ function applyScrollPreset(scrollTargetLayer) {
 }
 
 function createGUI() {
-    Image.prototype.onDraw = function () {
+    Image.prototype.onDraw = function() {
         // written by Marc Autret
         // "this" is the container; "this.image" is the graphic
         if (!this.image) return;
@@ -1597,7 +1626,7 @@ function createGUI() {
     idText.alignment = ['left', 'center'];
 
     var helpButton = leftIDGroup.add('button', undefined, localDict.helpButton);
-    helpButton.onClick = function () {
+    helpButton.onClick = function() {
         alert(localDict.helpDescription);
     }
 
@@ -1608,7 +1637,7 @@ function createGUI() {
 
     var translateLabel = rightIDGroup.add('statictext', undefined, localDict.translateLabel);
     var translateButton = rightIDGroup.add('button', undefined, localDict.translateButton);
-    translateButton.onClick = function () {
+    translateButton.onClick = function() {
         localDict = (localDict == langDict_en) ? langDict_ru : langDict_en;
         uberWindow.close();
         createGUI();
@@ -1653,7 +1682,7 @@ function createGUI() {
     filesGroupLeftGroup.margins = [20, 0, 20, 0];
 
     var backToPickerButton = filesGroupLeftGroup.add('button', undefined, localDict.backButton);
-    backToPickerButton.onClick = function () {
+    backToPickerButton.onClick = function() {
         sourceInitGroup.visible = true;
         filesGroup.visible = false;
         panelsEnabledTrigger('zeroLayer');
@@ -1668,9 +1697,11 @@ function createGUI() {
     manualBGGroup.orientation = "row";
 
     var manualBGLabel = manualBGGroup.add("statictext", undefined, localDict.manualBGPath);
-    var manualBGText = manualBGGroup.add("edittext", undefined, undefined, { readonly: true });
+    var manualBGText = manualBGGroup.add("edittext", undefined, undefined, {
+        readonly: true
+    });
     manualBGText.characters = defaultPathCharacters;
-    manualBGText.onChange = function () {
+    manualBGText.onChange = function() {
         if (manualBGText.text.length > 0) {
             outputPathText.text = manualBGText.text;
             manualPostText.enabled = true;
@@ -1691,10 +1722,10 @@ function createGUI() {
         }
     }
     var manualBGBrowser = manualBGGroup.add("button", undefined, localDict.browse);
-    manualBGBrowser.onChange = function () {
+    manualBGBrowser.onChange = function() {
         alert('changed' + this);
     }
-    manualBGBrowser.onClick = function () {
+    manualBGBrowser.onClick = function() {
         var targetPath = File.openDialog(localDict.selectBGImage, "All files:*.png;*.jpg;*.jpeg;*.pdf");
 
         if (targetPath != null) {
@@ -1752,7 +1783,7 @@ function createGUI() {
     }
     var manualBGPreview = manualBGGroup.add("button", undefined, 'Preview');
     manualBGPreview.enabled = false;
-    manualBGPreview.onClick = function () {
+    manualBGPreview.onClick = function() {
         // showImagePreviewBox(File(manualBGText.text));
         File(manualBGText.text).execute();
     }
@@ -1760,7 +1791,7 @@ function createGUI() {
     var manualBGClear = manualBGGroup.add("button", undefined, localDict.clearButtonLabel);
     // manualBGClear.visible = false;
     manualBGClear.enabled = false;
-    manualBGClear.onClick = function () {
+    manualBGClear.onClick = function() {
         manualBGText.text = '';
         doItButton.enabled = false;
         manualBGPreview.enabled = false;
@@ -1792,12 +1823,14 @@ function createGUI() {
 
     var manualPostLabel = manualTabPostGroup.add("statictext", undefined, localDict.manualPostPath);
     // manualPostLabel.characters = defaultDummyCharacters;
-    var manualPostText = manualTabPostGroup.add("edittext", undefined, undefined, { readonly: true });
+    var manualPostText = manualTabPostGroup.add("edittext", undefined, undefined, {
+        readonly: true
+    });
     manualPostText.characters = defaultPathCharacters;
     manualPostText.enabled = false;
     var manualPostBrowser = manualTabPostGroup.add("button", undefined, localDict.browse);
     // manualPostBrowser.enabled = false;
-    manualPostBrowser.onClick = function () {
+    manualPostBrowser.onClick = function() {
         targetPath = File.openDialog(localDict.selectPostPath, "All files:*.png;*.jpg;*.jpeg;*.pdf");
         if (targetPath != null) {
             manualPostText.text = targetPath.fsName;
@@ -1820,14 +1853,14 @@ function createGUI() {
 
     var manualPostPreview = manualTabPostGroup.add("button", undefined, 'Preview');
     manualPostPreview.enabled = false;
-    manualPostPreview.onClick = function () {
+    manualPostPreview.onClick = function() {
         // showImagePreviewBox(File(manualPostText.text));
         File(manualPostText.text).execute();
     }
 
     var manualPostClear = manualTabPostGroup.add("button", undefined, localDict.clearButtonLabel);
     manualPostClear.enabled = false;
-    manualPostClear.onClick = function () {
+    manualPostClear.onClick = function() {
         manualPostText.text = '';
         swapFilesButton.enabled = false;
         manualPostPreview.enabled = false;
@@ -1841,12 +1874,14 @@ function createGUI() {
     manualTabAudioGroup.alignment = "right";
     var manualAudioLabel = manualTabAudioGroup.add("statictext", undefined, localDict.audioFilePath);
     // manualAudioLabel.characters = defaultDummyCharacters;
-    var manualAudioText = manualTabAudioGroup.add("edittext", undefined, undefined, { readonly: true });
+    var manualAudioText = manualTabAudioGroup.add("edittext", undefined, undefined, {
+        readonly: true
+    });
     manualAudioText.characters = defaultPathCharacters;
     manualAudioText.enabled = false;
     var manualAudioBrowser = manualTabAudioGroup.add("button", undefined, localDict.browse);
     // manualAudioBrowser.enabled = false;
-    manualAudioBrowser.onClick = function () {
+    manualAudioBrowser.onClick = function() {
         targetPath = File.openDialog(localDict.selectAudioPath, "All files:*.wav;*.mp3");
         if (targetPath != null) {
             manualAudioText.text = targetPath.fsName;
@@ -1862,14 +1897,14 @@ function createGUI() {
 
     var manualAudioPreview = manualTabAudioGroup.add("button", undefined, 'Preview');
     manualAudioPreview.enabled = false;
-    manualAudioPreview.onClick = function () {
+    manualAudioPreview.onClick = function() {
         File(manualAudioText.text).execute();
         // alert("work in progress");
     }
 
     var manualAudioClear = manualTabAudioGroup.add("button", undefined, localDict.clearButtonLabel);
     manualAudioClear.enabled = false;
-    manualAudioClear.onClick = function () {
+    manualAudioClear.onClick = function() {
         manualAudioPreview.enabled = false;
         manualAudioClear.enabled = false;
         manualAudioText.text = '';
@@ -1910,7 +1945,7 @@ function createGUI() {
 
     var chkTypeFB = primarySettings.add('radiobutton', undefined, localDict.fbType);
     chkTypeFB.value = true;
-    chkTypeFB.onClick = function () {
+    chkTypeFB.onClick = function() {
         chkScrollBackground.enabled = true;
         chkPhotoBackground.enabled = true;
         chkScrollBackground.value = true;
@@ -1921,7 +1956,7 @@ function createGUI() {
         updatePreview();
     }
     var chkTypeTwitter = primarySettings.add('radiobutton', undefined, 'Twitter');
-    chkTypeTwitter.onClick = function () {
+    chkTypeTwitter.onClick = function() {
         chkScrollBackground.enabled = false;
         chkPhotoBackground.enabled = false;
         chkRoundCorners.enabled = true;
@@ -1930,7 +1965,7 @@ function createGUI() {
         updatePreview();
     }
     var chkTypeIG = primarySettings.add('radiobutton', undefined, 'Instagram');
-    chkTypeIG.onClick = function () {
+    chkTypeIG.onClick = function() {
         chkScrollBackground.enabled = false;
         chkPhotoBackground.enabled = false;
         chkRoundCorners.enabled = true;
@@ -1939,7 +1974,7 @@ function createGUI() {
         updatePreview();
     }
     var chkTypePHOTO = primarySettings.add('radiobutton', undefined, localDict.photoType);
-    chkTypePHOTO.onClick = function () {
+    chkTypePHOTO.onClick = function() {
         chkScrollBackground.enabled = true;
         chkPhotoBackground.enabled = true;
         chkRoundCorners.enabled = false;
@@ -1951,7 +1986,7 @@ function createGUI() {
         updatePreview();
     }
     var chkTypeDOC = primarySettings.add('radiobutton', undefined, localDict.docType);
-    chkTypeDOC.onClick = function () {
+    chkTypeDOC.onClick = function() {
         chkScrollBackground.enabled = true;
         chkPhotoBackground.enabled = true;
         chkPhotoBackground.value = true;
@@ -1963,7 +1998,7 @@ function createGUI() {
         updatePreview();
     }
     var chkTypePageScroll = primarySettings.add('radiobutton', undefined, localDict.pageScrollType);
-    chkTypePageScroll.onClick = function () {
+    chkTypePageScroll.onClick = function() {
         // chkTypePageScroll.value = true;
         chkScrollBackground.enabled = false;
         chkPhotoBackground.enabled = false;
@@ -1974,7 +2009,7 @@ function createGUI() {
     }
 
     var chkTypePageZoom = primarySettings.add('radiobutton', undefined, localDict.chkTypeZoom);
-    chkTypePageZoom.onClick = function () {
+    chkTypePageZoom.onClick = function() {
         // chkTypePageZoom.value = true;
         chkScrollBackground.enabled = false;
         chkPhotoBackground.enabled = false;
@@ -1991,7 +2026,7 @@ function createGUI() {
     var chkScrollBackground = secondarySettings.add('radiobutton', undefined, localDict.scrollingBackground);
     chkScrollBackground.value = true;
     chkScrollBackground.enabled = true;
-    chkScrollBackground.onClick = function () {
+    chkScrollBackground.onClick = function() {
         if (chkTypeFB.value == true) {
             chkRoundCorners.value = true;
         }
@@ -1999,7 +2034,7 @@ function createGUI() {
     }
     var chkPhotoBackground = secondarySettings.add('radiobutton', undefined, localDict.photoZoomBackground);
     chkPhotoBackground.enabled = true;
-    chkPhotoBackground.onClick = function () {
+    chkPhotoBackground.onClick = function() {
         if (chkTypeFB.value == true) {
             chkRoundCorners.value = false;
         }
@@ -2007,7 +2042,7 @@ function createGUI() {
 
     }
     var chkRoundCorners = secondarySettings.add('checkbox', undefined, localDict.roundCorners);
-    chkRoundCorners.onClick = function () {
+    chkRoundCorners.onClick = function() {
         updatePreview();
     }
     chkRoundCorners.value = true;
@@ -2031,13 +2066,13 @@ function createGUI() {
 
     var radioExperimental = previewRadioGroup.add('radioButton', undefined, localDict.experimentalLabel);
     radioExperimental.value = true;
-    radioExperimental.onClick = function () {
+    radioExperimental.onClick = function() {
         exGroupFull.visible = true;
         examplePreviewFullGroup.visible = false;
         updatePreview();
     }
     var radioExample = previewRadioGroup.add('radioButton', undefined, localDict.examplePreviewLabel);
-    radioExample.onClick = function () {
+    radioExample.onClick = function() {
         exGroupFull.visible = false;
         examplePreviewFullGroup.visible = true;
         updatePreview();
@@ -2059,7 +2094,7 @@ function createGUI() {
     exGroup.size = [defaultExPreviewWidth, defaultExPreviewHeight];
 
     var bgPre = exGroup.add('image', undefined, fbBGExPre);
-    bgPre.onDraw = function () {
+    bgPre.onDraw = function() {
         dimensionsBack = bgPre.image.size;
         if (chkTypeFB.value || chkTypePHOTO.value || chkTypeDOC.value) {
             if (chkScrollBackground.value) {
@@ -2094,12 +2129,12 @@ function createGUI() {
 
     var overlayExPre = exGroup.add('image', undefined, overlay);
     overlayExPre.alignment = ['fill', 'fill'];
-    overlayExPre.onDraw = function () {
+    overlayExPre.onDraw = function() {
         overlayExPre.graphics.drawImage(overlayExPre.image, 0, 0, defaultExPreviewWidth * 1.1, defaultExPreviewHeight * 1.1);
     }
 
     var postExPre = exGroup.add('image', undefined, fbPostExPre);
-    postExPre.onDraw = function () {
+    postExPre.onDraw = function() {
         dimensionsPost = postExPre.image.size;
         if (chkTypeFB.value) {
             var postWidth = defaultExPreviewWidth * previewAssetsDimensions.fbPostWidthPercent;
@@ -2135,7 +2170,7 @@ function createGUI() {
     docExGroup.alignment = ['left', 'fill'];
     docExGroup.size = [defaultExPreviewWidth - (defaultExPreviewWidth - defaultExPreviewWidth * previewAssetsDimensions.docMatteWidth) / 2, defaultExPreviewHeight];
     var docExPre = docExGroup.add('image', undefined, docExPrePlaceholder);
-    docExPre.onDraw = function () {
+    docExPre.onDraw = function() {
         var docExPreMatteWidth = defaultExPreviewWidth * previewAssetsDimensions.docMatteWidth;
         var docSqeezeRatio = defaultExPreviewWidth / docExPre.image.size[0];
         docExPre.graphics.drawImage(docExPre.image,
@@ -2146,20 +2181,20 @@ function createGUI() {
 
     var vignetteExPre = exGroup.add('image', undefined, vignette);
     vignetteExPre.alignment = ['fill', 'fill'];
-    vignetteExPre.onDraw = function () {
+    vignetteExPre.onDraw = function() {
         vignetteExPre.graphics.drawImage(vignetteExPre.image, 0, 0, defaultExPreviewWidth * 1.01, defaultExPreviewHeight * 1.01);
     }
 
     var quoteAuthorExPre = exGroup.add('image', undefined, quoteAutorBinary);
     quoteAuthorExPre.alignment = ['fill', 'fill'];
-    quoteAuthorExPre.onDraw = function () {
+    quoteAuthorExPre.onDraw = function() {
         quoteAuthorExPre.graphics.drawImage(quoteAuthorExPre.image, 0, 0, defaultExPreviewWidth, defaultExPreviewHeight);
     }
     quoteAuthorExPre.visible = false;
 
     var quoteNoAuthorExPre = exGroup.add('image', undefined, quoteNoAutorBinary);
     quoteNoAuthorExPre.alignment = ['fill', 'fill'];
-    quoteNoAuthorExPre.onDraw = function () {
+    quoteNoAuthorExPre.onDraw = function() {
         quoteNoAuthorExPre.graphics.drawImage(quoteNoAuthorExPre.image, 0, 0, defaultExPreviewWidth, defaultExPreviewHeight);
     }
     quoteNoAuthorExPre.visible = false;
@@ -2223,8 +2258,11 @@ function createGUI() {
     quoteAuthorGroup.alignChildren = ["left", "center"];
 
     var quoteAuthorLabel = quoteAuthorGroup.add("statictext", undefined, localDict.quoteAuthor);
-    var quoteAuthorText = quoteAuthorGroup.add("edittext", [0, 0, 400, 50], undefined, { multiline: true, scrolling: false });
-    quoteAuthorText.onChange = function () {
+    var quoteAuthorText = quoteAuthorGroup.add("edittext", [0, 0, 400, 50], undefined, {
+        multiline: true,
+        scrolling: false
+    });
+    quoteAuthorText.onChange = function() {
         updatePreview();
     }
 
@@ -2233,8 +2271,11 @@ function createGUI() {
     quoteText.alignChildren = ["right", "center"];
 
     var quoteTextLabel = quoteText.add("statictext", undefined, localDict.quoteText);
-    var quoteTextText = quoteText.add("edittext", [0, 0, 400, 150], undefined, { multiline: true, scrolling: false });
-    quoteTextText.onChange = function () {
+    var quoteTextText = quoteText.add("edittext", [0, 0, 400, 150], undefined, {
+        multiline: true,
+        scrolling: false
+    });
+    quoteTextText.onChange = function() {
         if (quoteTextText.text.length > 0) {
             chkQuoteEnabled.value = true;
             updatePreview();
@@ -2251,7 +2292,7 @@ function createGUI() {
 
     var chkQuoteEnabled = quotePanel.add("checkbox", undefined, localDict.quoteEnabled);
     chkQuoteEnabled.value = false;
-    chkQuoteEnabled.onClick = function () {
+    chkQuoteEnabled.onClick = function() {
         if (chkQuoteEnabled.value == true) {
             if (quoteTextText.text < 1) {
                 alert(localDict.missingQuoteText);
@@ -2295,7 +2336,7 @@ function createGUI() {
     // techOptions2.alignChildren = ['left', 'top'];
 
     var chkFastMode = resFpsSettings.add('checkBox', undefined, localDict.chkFastMode);
-    chkFastMode.onClick = function () {
+    chkFastMode.onClick = function() {
         if (chkFastMode.value) {
             chkMotionBlur.value = false;
             chkMotionBlur.enabled = false;
@@ -2322,8 +2363,12 @@ function createGUI() {
         outputGroup.size = [0, 0];
     }
 
-    var outputPathText = outputGroup.add("edittext", undefined, localDict.outputPathNote, { readonly: "true" });
-    var outputDescriptorText = outputGroup.add("edittext", undefined, "Name-" + generateTimeSuffix(), { readonly: "true" });
+    var outputPathText = outputGroup.add("edittext", undefined, localDict.outputPathNote, {
+        readonly: "true"
+    });
+    var outputDescriptorText = outputGroup.add("edittext", undefined, "Name-" + generateTimeSuffix(), {
+        readonly: "true"
+    });
     outputPathText.characters = outputDescriptorText.characters = 60;
 
     var buttonsGroup = outputAndButtonsGroup.add("group", undefined, "buttonsGroup");
@@ -2515,57 +2560,57 @@ function createGUI() {
             animationParams.isAutoDoable = false;
             animationParams.audioFile = undefined;
             audio_loop:
-            for (var i = 0; i < audioExtensions.length; i++) {
-                for (var j = 0; j < autoFiles.length; j++) {
-                    if (autoFiles[j].fsName.toLowerCase().indexOf(audioExtensions[i]) != -1) {
-                        animationParams.audioFile = autoFiles[j];
-                        animationParams.hasAudio = true;
-                        break audio_loop;
-                    }
+                for (var i = 0; i < audioExtensions.length; i++) {
+                    for (var j = 0; j < autoFiles.length; j++) {
+                        if (autoFiles[j].fsName.toLowerCase().indexOf(audioExtensions[i]) != -1) {
+                            animationParams.audioFile = autoFiles[j];
+                            animationParams.hasAudio = true;
+                            break audio_loop;
+                        }
 
+                    }
                 }
-            }
 
             animationParams.backGroundImage = undefined;
             animationParams.foregroundImage = undefined;
             image_loop:
-            for (var i = 0; i < imageExtensions.length; i++) {
-                for (var j = 0; j < autoFiles.length; j++) {
-                    if (autoFiles[j].fsName.toLowerCase().indexOf(imageExtensions[i]) != -1) {
-                        autoImages.push(autoFiles[j]);
-                        if (animationParams.backGroundImage == undefined) {
-                            animationParams.backGroundImage = autoFiles[j];
-                            animationParams.isAutoDoable = true;
-                            animationParams.isTwoLayer = false;
-                        } else {
-                            animationParams.foregroundImage = autoFiles[j];
-                            animationParams.isTwoLayer = true;
-                            break image_loop;
+                for (var i = 0; i < imageExtensions.length; i++) {
+                    for (var j = 0; j < autoFiles.length; j++) {
+                        if (autoFiles[j].fsName.toLowerCase().indexOf(imageExtensions[i]) != -1) {
+                            autoImages.push(autoFiles[j]);
+                            if (animationParams.backGroundImage == undefined) {
+                                animationParams.backGroundImage = autoFiles[j];
+                                animationParams.isAutoDoable = true;
+                                animationParams.isTwoLayer = false;
+                            } else {
+                                animationParams.foregroundImage = autoFiles[j];
+                                animationParams.isTwoLayer = true;
+                                break image_loop;
+                            }
                         }
                     }
                 }
-            }
 
             image_sort:
-            for (var i = 0; i < autoImages.length; i++) {
-                if (animationParams.isAutoDoable == true && animationParams.isTwoLayer == true) {
-                    for (var j = 0; j < bgKeywords.length; j++) {
-                        if (autoImages[i].fsName.toLowerCase().indexOf(bgKeywords[j]) != -1) {
-                            animationParams.backGroundImage = autoImages[i];
-                            autoImages.splice(i, 1);
-                            animationParams.foregroundImage = autoImages[0];
-                            break image_sort;
-                        } else if (autoImages[i].fsName.toLowerCase().indexOf(fgKeywords[j]) != -1) {
-                            animationParams.foregroundImage = autoImages[i];
-                            autoImages.splice(i, 1);
-                            animationParams.backGroundImage = autoImages[0];
-                            break image_sort;
+                for (var i = 0; i < autoImages.length; i++) {
+                    if (animationParams.isAutoDoable == true && animationParams.isTwoLayer == true) {
+                        for (var j = 0; j < bgKeywords.length; j++) {
+                            if (autoImages[i].fsName.toLowerCase().indexOf(bgKeywords[j]) != -1) {
+                                animationParams.backGroundImage = autoImages[i];
+                                autoImages.splice(i, 1);
+                                animationParams.foregroundImage = autoImages[0];
+                                break image_sort;
+                            } else if (autoImages[i].fsName.toLowerCase().indexOf(fgKeywords[j]) != -1) {
+                                animationParams.foregroundImage = autoImages[i];
+                                autoImages.splice(i, 1);
+                                animationParams.backGroundImage = autoImages[0];
+                                break image_sort;
+                            }
                         }
+                    } else {
+                        break image_sort;
                     }
-                } else {
-                    break image_sort;
                 }
-            }
 
             // alert(animationParams.toSource());
             // populate manual tab
@@ -2741,7 +2786,7 @@ function createGUI() {
         }
     }
 
-    cancelButton.onClick = function () {
+    cancelButton.onClick = function() {
         uberWindow.close();
         return false;
     }

@@ -167,14 +167,16 @@ function composer(parameters, uberWindow) {
                 break;
         }
         //add round corners mask
-        if (parameters.roundCorners == true) { addRoundMask(postPreCompName); }
+        if (parameters.roundCorners == true) {
+            addRoundMask(postPreCompName);
+        }
     }
 
     //set Quote
     updateProgress(localDict.setQuote);
     if (parameters.quoteEnabled) {
         app.project.item(1).layer(findLayerIdByName("Quote-Box")).enabled = true;
-        setBB(
+        populateBlueBox(
             editText(insertUnbreakableSpaces(parameters.quoteAuthor)),
             editText(insertUnbreakableSpaces(parameters.quoteText)),
             audioTrack
@@ -261,8 +263,25 @@ function addRoundMask(postLayer) {
     roundCorners = new Shape();
     ratio = 2.6
     roundness = targetLayer.width * ratio / 100;
-    roundCorners.vertices = [[roundness, 0], [targetLayer.width - roundness, 0], [targetLayer.width, roundness], [targetLayer.width, targetLayer.height - roundness], [targetLayer.width - roundness, targetLayer.height], [roundness, targetLayer.height], [0, targetLayer.height - roundness], [0, roundness]];
-    roundCorners.inTangents = [[-roundness, 0], [0, 0], [0, -roundness], [0, 0], [roundness, 0], [0, 0], [0, roundness]];
+    roundCorners.vertices = [
+        [roundness, 0],
+        [targetLayer.width - roundness, 0],
+        [targetLayer.width, roundness],
+        [targetLayer.width, targetLayer.height - roundness],
+        [targetLayer.width - roundness, targetLayer.height],
+        [roundness, targetLayer.height],
+        [0, targetLayer.height - roundness],
+        [0, roundness]
+    ];
+    roundCorners.inTangents = [
+        [-roundness, 0],
+        [0, 0],
+        [0, -roundness],
+        [0, 0],
+        [roundness, 0],
+        [0, 0],
+        [0, roundness]
+    ];
     roundCorners.closed = true;
     app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').addProperty("ADBE Mask Atom");
     app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').property("ADBE Mask Atom").property("ADBE Mask Shape").setValue(roundCorners);
@@ -422,7 +441,9 @@ function configureEffectParameters(animationType, layerName, postScrollSpeed, au
         case "socialPost":
             applyScrollPreset(targetLayer);
             applyWipePreset(targetLayer, "open");
-            if (scaleBumper == true) { targetLayer.scale.setValue([110, 110, 110]); }
+            if (scaleBumper == true) {
+                targetLayer.scale.setValue([110, 110, 110]);
+            }
             targetLayer.effect("Scroll Speed").slider.setValue(postScrollSpeed);
             targetLayer.effect("SlideIn").checkbox.setValue(false);
             targetLayer.effect("FitToBackground").checkbox.setValue(false);
