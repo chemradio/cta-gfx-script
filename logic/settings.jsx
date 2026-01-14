@@ -36,3 +36,4 @@ var previewAssetsDimensions = {
     docMatteWidth: .7
 }
 var globalMotionBlur = true;
+var compLength = 60;
