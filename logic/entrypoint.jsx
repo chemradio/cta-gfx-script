@@ -1,1 +1,1 @@
-createGUI(app);
+createGUI();

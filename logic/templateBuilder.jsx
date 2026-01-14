@@ -3,7 +3,7 @@ function createAETemplate(app, fontFamily, parameters) {
 
     updateProgress('Configuring Comp');
     // default vars
-    var compLength = 60;
+
 
     // check if project is open and CLOSE it without changes
     if (app.project != undefined) {
