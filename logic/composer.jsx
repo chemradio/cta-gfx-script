@@ -2,29 +2,19 @@ function composer(parameters, uberWindow) {
     // app.beginUndoGroup("composer");
 
     // create progress window
-    progressWindow = new Window("palette", "Progress", undefined);
-    progressWindow.orientation = "column";
-    progressWindow.alignChildren = "fill";
-    var makingMagicText = progressWindow.add('statictext', undefined, localDict.magic);
-    makingMagicText.bounds = [0, 0, 300, 20];
-    progressBar = progressWindow.add('progressbar', undefined, 0, 250);
-    progressBar.value = 0;
-    progressStage = progressWindow.add('statictext', undefined, localDict.initProgress);
-    progressWindow.show();
+    progressWindow = createProgressWindow(250, localDict.magic, localDict.initProgress);
+    // progressWindow.show();
 
     // create template project
-    updateProgress(localDict.initAETemplate);
     createAETemplate(parameters.fontFamily, parameters);
 
     app.beginSuppressDialogs();
-    updateProgress(localDict.importFiles);
 
     // import files from PATH folder
     var files = [];
     var assetsFolder = app.project.items.addFolder("Assets");
 
     //import AUDIO
-    updateProgress(localDict.importAudio);
     if (parameters.hasAudio == true) {
         importAsset(parameters.audioFile);
         files.push(parameters.audioFile);
@@ -45,7 +35,6 @@ function composer(parameters, uberWindow) {
     var audioTrackReference = (parameters.hasAudio == true) ? audioTrack : undefined;
 
     //import BG
-    updateProgress(localDict.importBackground);
     importAsset(parameters.backGroundImage);
     files.push(parameters.backGroundImage);
     var splitPath = String(parameters.backGroundImage).split("/");
@@ -233,190 +222,16 @@ function composer(parameters, uberWindow) {
 
 
 
-function updateProgress(stage, percent) {
-    progressStage.text = stage;
-    if (percent != undefined) {
-        var percentage = percent;
-    } else {
-        var percentage = 10;
-    }
-    progressBar.value += percentage;
-    progressWindow.update();
-}
 
 
 
 
 
-function setWorkArea(isSOT, audioTrack) {
-    if (isSOT == true) {
-        audioLayer = app.project.item(1).layer(findLayerIdByName(audioTrack));
-        app.project.item(1).workAreaDuration = 0.1 + audioLayer.outPoint - audioLayer.inPoint + defaultCompTail;
-    } else {
-        app.project.item(1).workAreaDuration = defaultCompDuration;
-    }
-}
-
-
-function addRoundMask(postLayer) {
-    targetLayer = app.project.item(1).layer(findLayerIdByName(postLayer));
-    roundCorners = new Shape();
-    ratio = 2.6
-    roundness = targetLayer.width * ratio / 100;
-    roundCorners.vertices = [
-        [roundness, 0],
-        [targetLayer.width - roundness, 0],
-        [targetLayer.width, roundness],
-        [targetLayer.width, targetLayer.height - roundness],
-        [targetLayer.width - roundness, targetLayer.height],
-        [roundness, targetLayer.height],
-        [0, targetLayer.height - roundness],
-        [0, roundness]
-    ];
-    roundCorners.inTangents = [
-        [-roundness, 0],
-        [0, 0],
-        [0, -roundness],
-        [0, 0],
-        [roundness, 0],
-        [0, 0],
-        [0, roundness]
-    ];
-    roundCorners.closed = true;
-    app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').addProperty("ADBE Mask Atom");
-    app.project.item(1).layer(findLayerIdByName(postLayer)).property('ADBE Mask Parade').property("ADBE Mask Atom").property("ADBE Mask Shape").setValue(roundCorners);
-};
 
 
 function configureEffectParameters(animationType, layerName, postScrollSpeed, audioLayerReference, scaleBumper) {
     var targetLayer = app.project.item(1).layer(findLayerIdByName(layerName));
     var postZoom = (postScrollSpeed > 0 || postScrollSpeed == false) ? true : false;
-
-    function fitImageToComp(targetLayerName, zoom, audioLayerReference, scaleBumper) {
-        var targetLayerFit = app.project.item(1).layer(findLayerIdByName(targetLayerName));
-        var layerOrientation = ((targetLayerFit.width / targetLayerFit.height) > (compWidth / compHeight)) ? "horizontal" : "vertical";
-        if (layerOrientation == "horizontal") {
-            var startPercentage = (scaleBumper == true) ? 60 : 50;
-            var endPercentage = (scaleBumper == true) ? 70 : 60;
-            var targetStartScale = compWidth * startPercentage / targetLayerFit.width;
-            var targetEndScale = compWidth * endPercentage / targetLayerFit.width;
-        } else {
-            var startPercentage = (scaleBumper == true) ? 60 : 50;
-            var endPercentage = (scaleBumper == true) ? 70 : 60;
-            var targetStartScale = compHeight * startPercentage / targetLayerFit.height;
-            var targetEndScale = compHeight * endPercentage / targetLayerFit.height;
-        }
-
-        // slow zoom in
-        var zoomDuration = (audioLayerReference != undefined) ? app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail : defaultCompDuration;
-        if (zoom == true) {
-            targetLayerFit.scale.setValueAtTime(0, [targetStartScale, targetStartScale, targetStartScale]);
-            targetLayerFit.scale.setValueAtTime(zoomDuration, [targetEndScale, targetEndScale, targetEndScale]);
-            targetLayerFit.scale.setTemporalEaseAtKey(2, [easeIn, easeIn, easeIn]);
-        } else {
-            targetLayerFit.scale.setValue([targetStartScale, targetStartScale, targetStartScale]);
-        }
-    }
-
-    function fitPostToComp(targetLayerName, zoom, audioLayerReference, scaleBumper) {
-        var targetLayerFit = app.project.item(1).layer(findLayerIdByName(targetLayerName));
-        var layerOrientation = ((targetLayerFit.width / targetLayerFit.height) > postAspect) ? "horizontal" : "vertical";
-        if (layerOrientation == "horizontal") {
-            var startPercentage = (scaleBumper == true) ? 65 : 55;
-            var endPercentage = (scaleBumper == true) ? 70 : 60;
-            var targetStartScale = compWidth * startPercentage / targetLayerFit.width;
-            var targetEndScale = compWidth * endPercentage / targetLayerFit.width;
-        } else {
-            var startPercentage = (scaleBumper == true) ? 80 : 70;
-            var endPercentage = (scaleBumper == true) ? 90 : 80;
-            var targetStartScale = compHeight * startPercentage / targetLayerFit.height;
-            var targetEndScale = compHeight * endPercentage / targetLayerFit.height;
-        }
-
-        // slow zoom in
-        var zoomDuration = (audioLayerReference != undefined) ? app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail : defaultCompDuration;
-        if (zoom == true) {
-            targetLayerFit.scale.setValueAtTime(0, [targetStartScale, targetStartScale, targetStartScale]);
-            targetLayerFit.scale.setValueAtTime(zoomDuration, [targetEndScale, targetEndScale, targetEndScale]);
-            targetLayerFit.scale.setTemporalEaseAtKey(2, [easeIn, easeIn, easeIn]);
-        } else {
-            targetLayerFit.scale.setValue([targetStartScale, targetStartScale, targetStartScale]);
-        }
-    }
-
-    function fitBackgroundToComp(targetLayerName, audioLayerReference, reverse) {
-        var startPercentage = 120;
-        var endPercentage = 100;
-
-        var targetLayerFit = app.project.item(1).layer(findLayerIdByName(targetLayerName));
-        var layerOrientation = ((targetLayerFit.width / targetLayerFit.height) > (compWidth / compHeight)) ? "horizontal" : "vertical";
-        if (layerOrientation == "vertical") {
-            var targetStartScale = compWidth * startPercentage / targetLayerFit.width;
-            var targetEndScale = compWidth * endPercentage / targetLayerFit.width;
-        } else {
-            var targetStartScale = compHeight * startPercentage / targetLayerFit.height;
-            var targetEndScale = compHeight * endPercentage / targetLayerFit.height;
-        }
-
-        var zoomDuration = (audioLayerReference != undefined) ? app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail + 5 : defaultCompDuration;
-        if (reverse) {
-            targetLayerFit.scale.setValueAtTime(0, [targetEndScale, targetEndScale, targetEndScale]);
-            targetLayerFit.scale.setValueAtTime(zoomDuration, [targetStartScale, targetStartScale, targetStartScale]);
-
-        } else {
-            targetLayerFit.scale.setValueAtTime(0, [targetStartScale, targetStartScale, targetStartScale]);
-            targetLayerFit.scale.setValueAtTime(zoomDuration, [targetEndScale, targetEndScale, targetEndScale]);
-        }
-
-        targetLayerFit.scale.setTemporalEaseAtKey(2, [easeIn, easeIn, easeIn]);
-    }
-
-    function documentScroll(targetLayerName, audioLayerReference) {
-        var matteWidth = documentMatteWidth;
-        var targetLayerScroll = app.project.item(1).layer(findLayerIdByName(targetLayerName));
-        var xTargetPixels = compWidth;
-        var targetScale = xTargetPixels * 100 / targetLayerScroll.width;
-        var xRealPixels = targetLayer.width * targetLayer.scale.value[0] / 100;
-        targetLayerScroll.scale.setValue([targetScale, targetScale, targetScale]);
-        targetLayer.trackMatteType = TrackMatteType.ALPHA;
-        targetLayer.anchorPoint.setValue([0, 0]);
-
-        if (audioLayerReference != undefined) {
-            var scrollDurationReference = app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail;
-            var scrollDuration = (scrollDurationReference < 14) ? 14 : scrollDurationReference;
-        } else {
-            var scrollDuration = defaultCompDuration;
-        }
-
-        var startXPosition = [(compWidth - matteWidth) / 2];
-        var endXPosition = [(compWidth - matteWidth) / 2 * -1];
-
-        targetLayer.position.dimensionsSeparated = true;
-        targetLayer.transform.property("ADBE Position_1").setValue(0);
-
-        var expressionX = "easeOut(time, inPoint, outPoint, (thisComp.width - " + documentMatteWidth + ") / 2, (thisComp.width - " + documentMatteWidth + ") / 2 * -1);"
-
-        targetLayer.transform.property("ADBE Position_0").expressionEnabled = true;
-        targetLayer.transform.property("ADBE Position_0").expression = expressionX;
-        targetLayer.outPoint = scrollDuration;
-    }
-
-    function getOptimalBGScrollSpeed(targetLayerName, animationType, audioLayerReference) {
-        var targetLayerScroll = app.project.item(1).layer(findLayerIdByName(targetLayerName));
-        switch (animationType) {
-            case 'onlyBackground':
-                var sliderCap = 40;
-                break;
-            case 'socialBackground':
-            default:
-                var sliderCap = 20;
-                break;
-        }
-        var targetTime = (audioLayerReference != undefined) ? app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail + 5 : defaultCompDuration;
-        var calcSpeed = (targetLayerScroll.height * targetLayerScroll.transform.scale.value[1] / 100 - compHeight) / targetTime;
-        return (calcSpeed > sliderCap) ? sliderCap : calcSpeed;
-    }
-
     switch (animationType) {
         case "twitter":
         case "instagram":
