@@ -13,10 +13,10 @@ function fitBackgroundToComp(targetLayerName, audioLayerReference, reverse) {
     }
 
     var zoomDuration = (audioLayerReference != undefined) ? app.project.item(1).layer(findLayerIdByName(audioLayerReference)).outPoint + defaultCompTail + 5 : defaultCompDuration;
+
     if (reverse) {
         targetLayerFit.scale.setValueAtTime(0, [targetEndScale, targetEndScale, targetEndScale]);
         targetLayerFit.scale.setValueAtTime(zoomDuration, [targetStartScale, targetStartScale, targetStartScale]);
-
     } else {
         targetLayerFit.scale.setValueAtTime(0, [targetStartScale, targetStartScale, targetStartScale]);
         targetLayerFit.scale.setValueAtTime(zoomDuration, [targetEndScale, targetEndScale, targetEndScale]);
