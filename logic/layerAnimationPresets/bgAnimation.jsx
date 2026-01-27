@@ -30,8 +30,6 @@ function configureBGAnimation(targetLayer, backgroundAnimationType, postScrollSp
             targetLayer.motionBlur = (globalMotionBlur) ? true : false;
             fitBackgroundToComp(layerName, audioLayerReference, true);
             break;
-        case "compSlideIn":
-
         default:
             break;
     }

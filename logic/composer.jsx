@@ -5,8 +5,15 @@ function composer(parameters, uberWindow) {
     progressWindow = createProgressWindow(250, localDict.magic, localDict.initProgress);
     // progressWindow.show();
 
+    app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
+    // check if project is open and CLOSE it without changes
+    if (app.project != undefined) {
+        app.project.close(CloseOptions.DO_NOT_SAVE_CHANGES);
+    }
+
     // create template project
     createAETemplate(parameters.fontFamily, parameters);
+
 
     app.beginSuppressDialogs();
 
@@ -43,7 +50,6 @@ function composer(parameters, uberWindow) {
     backgroundAsset.parentFolder = assetsFolder;
 
     //import POST
-    updateProgress(localDict.importForeground);
     if (parameters.isTwoLayer == true) {
         importAsset(parameters.foregroundImage);
         files.push(parameters.foregroundImage);
@@ -54,7 +60,6 @@ function composer(parameters, uberWindow) {
     }
 
     //add audiotrack
-    updateProgress(localDict.audioToTimeline);
     if (parameters.hasAudio == true) {
         addToTimeline(audioTrack);
         app.project.item(1).layer(findLayerIdByName(audioTrack)).startTime = 0.1;
