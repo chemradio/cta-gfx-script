@@ -159,7 +159,6 @@ function composer(parameters, uberWindow) {
     app.project.item(findAsset("0_RENDER")).motionBlur = (globalMotionBlur) ? true : false;
 
     // if full comp should slide in
-    updateProgress(localDict.setSlideIn);
     if (parameters.compSlideIn == true) {
         oldRenderComp = app.project.item(findAsset("0_RENDER"));
         oldRenderComp.parentFolder = app.project.item(findAsset("Assets"));
