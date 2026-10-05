@@ -339,6 +339,7 @@ var defaultBGScrollSpeed;
 var defaultPreviewBoxSize = [700, 700];
 var defaultExPreviewWidth = 315;
 var defaultExPreviewHeight = defaultExPreviewWidth / 16 * 9;
+var fontSizeMultiplier = 0.043;
 var previewAssetsDimensions = {
     fbPostWidthPercent: .52,
     fbPostOffsetPercent: .125,
@@ -1255,13 +1256,9 @@ function createAETemplate(fontFamily, parameters) {
 
 function createBlueBox(fontFamily) {
     switch (fontFamily) {
-        case 'Arial':
-            var fontRegular = 'ArialMT';
-            var fontBold = 'Arial-BoldMT';
-            break;
-        case 'Times New Roman':
-            var fontRegular = 'TimesNewRomanPSMT';
-            var fontBold = 'TimesNewRomanPS-BoldMT';
+        case 'Skolar Sans PE':
+            var fontRegular = "SkolarSansPE-Bd";
+            var fontBold = "SkolarSansPE-Eb";
             break;
         case 'Segoe UI':
             var fontRegular = 'SegoeUI';
@@ -1402,7 +1399,7 @@ function createBlueBox(fontFamily) {
     var commentTextDocument = commentTextBox.property("ADBE Text Properties").property("ADBE Text Document").value;
     commentTextDocument.resetCharStyle();
     commentTextDocument.font = fontRegular;
-    commentTextDocument.fontSize = compHeight * 0.04166;
+    commentTextDocument.fontSize = compHeight * fontSizeMultiplier;
     commentTextDocument.leading = range(720, 2160, 24.7, 104.8, compHeight);
     commentTextDocument.tracking = 0;
     commentTextDocument.fillColor = [16 / 255, 44 / 255, 68 / 255];
@@ -1445,7 +1442,7 @@ function createBlueBox(fontFamily) {
     var nameTextDocument = nameTextBox.property("ADBE Text Properties").property("ADBE Text Document").value;
     nameTextDocument.resetCharStyle();
     nameTextDocument.font = fontBold;
-    nameTextDocument.fontSize = compHeight * 0.04166;
+    nameTextDocument.fontSize = compHeight * fontSizeMultiplier;
     nameTextDocument.leading = range(720, 2160, 24.7, 104.8, compHeight);
     nameTextDocument.tracking = 0;
     nameTextDocument.fillColor = [16 / 255, 44 / 255, 68 / 255];
@@ -2243,9 +2240,9 @@ function createGUI() {
             updatePreview();
         }
     };
-    var fontSelector = quotePanel.add('dropdownlist', undefined, ['Roboto Condensed', 'Arial', 'Segoe UI', 'Times New Roman']);
+    var fontSelector = quotePanel.add('dropdownlist', undefined, ['Roboto Condensed', 'Skolar Sans PE', 'Segoe UI']);
     fontSelector.alignment = 'right';
-    fontSelector.selection = 0;
+    fontSelector.selection = 1;
     fontSelector.margins = [quoteAuthorGroup.width, 0, 0, 0];
     fontSelector.helpTip = 'Font family';
 
