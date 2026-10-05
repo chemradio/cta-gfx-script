@@ -1168,7 +1168,8 @@ function createAETemplate(fontFamily, parameters) {
     vignetteOverlay.property('ADBE Mask Parade').property("ADBE Mask Atom").maskMode = MaskMode.SUBTRACT;
 
     tintWipe.moveToBeginning();
-    flickerRemoval.moveToBeginning();
+    // flickerRemoval.moveToBeginning();
+    vignetteOverlay.moveToBeginning();
 
     updateProgress('Adding Highlighter Shape');
     var selectorLayer = app.project.item(1).layers.addShape();
@@ -1208,7 +1209,6 @@ function createAETemplate(fontFamily, parameters) {
     bbLayer.property("ADBE Time Remapping").expressionEnabled = true;
     bbLayer.property("ADBE Time Remapping").expression = 'us = thisLayer;\ninP = us.inPoint;\noutP = us.outPoint;\nduration = outP - inP;\nintro = time - inP;\noutro = outP - inP;\nif (intro < 1.4) {\n    linear(intro, 0, 2, 0, 2);\n} else if (intro < outro - 1) {\n    5;\n} else {\n    linear(intro, outro - 1, outro, 6, 7)\n}';
 
-    vignetteOverlay.moveToBeginning();
 
     updateProgress('Adding Guide Layer');
     var guideLayer = app.project.item(1).layers.addShape();
@@ -1381,7 +1381,7 @@ function createBlueBox(fontFamily) {
 
     var rectangleFillGroup = blueBoxLayer.property('ADBE Root Vectors Group').property("Rectangle 1").property("ADBE Vectors Group").addProperty("ADBE Vector Graphic - Fill");
     rectangleFillGroup.property("ADBE Vector Fill Color").expressionEnabled = true;
-    rectangleFillGroup.property("ADBE Vector Fill Color").expression = 'pool = [14, 202, 227, 0] / 255;\nmidnight = [16, 44, 68, 0] / 255;\nraspberry = [255, 0, 85, 0] / 255;\nheather = [222, 229, 236, 0] / 255;\nplum = [45, 25, 150, 0] / 255;\nwhite = [255, 255, 255, 0] / 255;\ncolor = [pool, midnight, raspberry, heather, plum, white];\ncolorStyler = thisComp.layer("Controller").effect("Color Styler")("Slider").value;\ncolor[colorStyler-1];';
+    rectangleFillGroup.property("ADBE Vector Fill Color").expression = 'flame = [255,84,0,0] /255;\npool = [14, 202, 227, 0] / 255;\nmidnight = [16, 44, 68, 0] / 255;\nraspberry = [255, 0, 85, 0] / 255;\nheather = [222, 229, 236, 0] / 255;\nplum = [45, 25, 150, 0] / 255;\nwhite = [255, 255, 255, 0] / 255;\ncolor = [flame, pool, midnight, raspberry, heather, plum, white];\ncolorStyler = thisComp.layer("Controller").effect("Color Styler")("Slider").value;\ncolor[colorStyler-1];';
     var offsetPathsGroup = blueBoxLayer.property('ADBE Root Vectors Group').addProperty("ADBE Vector Filter - Offset");
     offsetPathsGroup.property("ADBE Vector Offset Amount").expressionEnabled = true;
     offsetPathsGroup.property("ADBE Vector Offset Amount").expression = 'thisComp.layer("Controller").effect("Padding")("Slider")';
@@ -1454,7 +1454,7 @@ function createBlueBox(fontFamily) {
     nameTextBox.property("ADBE Text Properties").property("ADBE Text Document").setValue(nameTextDocument);
     nameTextBox.text.sourceText.setValue(localDict.defaultNameText.toUpperCase());
 
-    nameTextBox.property('ADBE Effect Parade').property("ADBE Fill").color.expression = 'pool = [14, 202, 227, 0] / 255;\nmidnight = [16, 44, 68, 0] / 255;\nraspberry = [255, 0, 85, 0] / 255;\nheather = [222, 229, 236, 0] / 255;\nplum = [45, 25, 150, 0] / 255;\nwhite = [255, 255, 255, 0] / 255;\ncolor = [midnight, heather, white, midnight, white, plum];\ncolorStyler = thisComp.layer("Controller").effect("Color Styler")("Slider").value;\ncolor[colorStyler-1];';
+    nameTextBox.property('ADBE Effect Parade').property("ADBE Fill").color.expression = 'pool = [14, 202, 227, 0] / 255;\nmidnight = [16, 44, 68, 0] / 255;\nraspberry = [255, 0, 85, 0] / 255;\nheather = [222, 229, 236, 0] / 255;\nplum = [45, 25, 150, 0] / 255;\nwhite = [255, 255, 255, 0] / 255;\ncolor = [white, midnight, heather, white, midnight, white, plum];\ncolorStyler = thisComp.layer("Controller").effect("Color Styler")("Slider").value;\ncolor[colorStyler-1];';
     nameTextBox.transform.property("ADBE Position_0").expression = 'thisComp.layer("CommentText").transform.xPosition';
     nameTextBox.transform.property("ADBE Position_1").expression = 'commentHeight = thisComp.layer("CommentText").sourceRectAtTime().height;\nthisComp.layer("CommentText").transform.yPosition + commentHeight + ' + compHeight * 0.04629 + ' + thisComp.layer("Controller").effect("ySpacing")("Slider")';
 
